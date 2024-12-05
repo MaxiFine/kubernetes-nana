@@ -36,5 +36,16 @@ spec:
       - name: mongo-storage
         emptyDir: {}
 
-
+# addting deployment and services in the same file
 ---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: mongodb-service
+spec: 
+  selector: 
+    app: mongodb
+  ports: 
+    - protocol: TCP
+      port: 27017
+      targetPort: 2717
