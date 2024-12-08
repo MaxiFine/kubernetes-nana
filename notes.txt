@@ -1,0 +1,125 @@
+# MongoDB Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        env: 
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-username 
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-password
+        
+        volumeMounts:
+        - name: mongo-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongo-storage
+        emptyDir: {}
+
+---
+# MongoDB Service
+apiVersion: v1
+kind: Service
+metadata: 
+  name: mongodb-service
+spec: 
+  selector: 
+    app: mongo
+  ports: 
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017  # Corrected from 2717 to 27017
+  type: ClusterIP  # Optional, default is ClusterIP
+
+---
+# Mongo-Express Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: ME_CONFIG_MONGODB_SERVER
+          value: "mongodb-service"  # This should match the MongoDB service name
+        - name: ME_CONFIG_MONGODB_PORT
+          value: "27017"
+        - name: ME_CONFIG_BASICAUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-express-username  # Define this in your secret
+        - name: ME_CONFIG_BASICAUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-express-password  # Define this in your secret
+
+---
+# Mongo-Express Service
+apiVersion: v1
+kind: Service
+metadata: 
+  name: mongo-express-service
+spec: 
+  selector: 
+    app: mongo-express
+  ports: 
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: LoadBalancer  # Use LoadBalancer if you want external access
+
+
+
+
+validate secrets
+kubectl get secrets mongodb-secret -o yaml
+
+get labels
+kubectl get pods --show-labels
+
+system 
+kubectl get pods -n kube-system
+
+networks
+kubectl get networkpolicies
+
+
+decoding secret
+echo "dXNlcm5hbWU=" | base64 --decode  # Expected: username
+echo "cGFzc3dvcmQ=" | base64 --decode  # Expected: password
