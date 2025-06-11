@@ -8,3 +8,6 @@ Ingress is used to open a tunnel to allow communicaion between services
 ConfigMap: will host the external configurations of the application 
 
 Secrets: is used to store secret data
+
+deployment notes
+$ kubectl get deployment nginx-deployment -o yaml
