@@ -9,5 +9,8 @@ ConfigMap: will host the external configurations of the application
 
 Secrets: is used to store secret data
 
-deployment notes
+[deployment data stored in etcd]
 $ kubectl get deployment nginx-deployment -o yaml
+
+[Getting kubernetes service data]
+kubectl describe service nginx-service

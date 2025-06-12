@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment  
+metadata:
+  name: mongodb-deployment
+  labels:
+    app: mongodb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+            ephemeral-storage: "1Gi"
+          limits:
+            cpu: "250m"
+            memory: "512Mi"
+            ephemeral-storage: "2Gi"
+        ports:
+        - containerPort: 27017
+        env:
+        # Will be using secrets for sensitive data
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              # name: mongo-secret
+              name: mongodb-secret
+              # key: mongo-root-username
+              key: mongo-root-username  # the key from secret
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              # key: mongo-root-password
+              key: mongo-root-password  # the key from secret
+
+#############################################
+## MongoDB Service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  # type: ClusterIP
