@@ -1,0 +1,8 @@
+#######################################
+### MONGO DB CREATION ORDER
+1. created mongodb deployment
+2. created secrets for mongodb
+
+* apply secret to be created so it could be referenced 
+in the deployment.
+
