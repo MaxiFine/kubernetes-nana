@@ -30,10 +30,14 @@ spec:
             memory: "256Mi"
             ephemeral-storage: "2Gi"
         env:
+        # - name: ME_CONFIG_MONGODB_SERVER
+        #   value: mongodb-service
         - name: ME_CONFIG_MONGODB_SERVER
-          value: mongodb-service
-        - name: ME_CONFIG_MONGODB_PORT
-          value: "27017"
+          # value: "27017"
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-configmap
+              key: database_port
         - name: ME_CONFIG_MONGODB_ADMINUSERNAME
           valueFrom:
             secretKeyRef:
