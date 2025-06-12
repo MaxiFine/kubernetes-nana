@@ -30,14 +30,15 @@ spec:
             memory: "256Mi"
             ephemeral-storage: "2Gi"
         env:
-        # - name: ME_CONFIG_MONGODB_SERVER
-        #   value: mongodb-service
+        - name: ME_CONFIG_MONGODB_PORT
+          value: "27017"
+          # value: mongodb-service
         - name: ME_CONFIG_MONGODB_SERVER
           # value: "27017"
           valueFrom:
             configMapKeyRef:
               name: mongo-configmap
-              key: database_port
+              key: database_host
         - name: ME_CONFIG_MONGODB_ADMINUSERNAME
           valueFrom:
             secretKeyRef:
@@ -48,3 +49,23 @@ spec:
             secretKeyRef:
               name: mongodb-secret
               key: mongo-root-password
+
+
+#################
+## MONGO EXPRESS SERVICE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express-service
+spec:
+  selector:
+    app: mongo-express
+  # Making the pod or service accessible outside the cluster
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 8081
+    # where the service will be exposed
+    nodePort: 30000 # Optional: Only include this if you want a specific node port.
