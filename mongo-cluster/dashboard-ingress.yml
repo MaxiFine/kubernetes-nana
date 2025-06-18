@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard-ingress
+  namespace: kubernetes-dashboard
+spec:
+  rules:
+  # - host: mongo-express.local
+  - host: dashboard.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            # name: mongo-express
+            # name: mongo-express-service
+            name: kubernetes-dashboard
+            port:
+              # number: 8081
+              number: 80
+          # serviceName: kubernetes-dashboard
+          # servicePort: 80
