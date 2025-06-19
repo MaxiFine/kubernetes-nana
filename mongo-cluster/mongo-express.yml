@@ -32,9 +32,7 @@ spec:
         env:
         - name: ME_CONFIG_MONGODB_PORT
           value: "27017"
-          # value: mongodb-service
         - name: ME_CONFIG_MONGODB_SERVER
-          # value: "27017"
           valueFrom:
             configMapKeyRef:
               name: mongo-configmap
@@ -67,5 +65,4 @@ spec:
   - protocol: TCP
     port: 8081
     targetPort: 8081
-    # where the service will be exposed
     nodePort: 30000 # Optional: Only include this if you want a specific node port.
