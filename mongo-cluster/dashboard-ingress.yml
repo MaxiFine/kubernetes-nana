@@ -5,7 +5,6 @@ metadata:
   namespace: kubernetes-dashboard
 spec:
   rules:
-  # - host: mongo-express.local
   - host: dashboard.com
     http:
       paths:
@@ -13,11 +12,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            # name: mongo-express
-            # name: mongo-express-service
             name: kubernetes-dashboard
             port:
-              # number: 8081
               number: 80
-          # serviceName: kubernetes-dashboard
-          # servicePort: 80
+        
